@@ -1,0 +1,77 @@
+# XcodeGen konfigürasyonu — `xcodegen generate` ile Prism.xcodeproj üretilir.
+# XcodeGen kullanmak istemiyorsan README'deki manuel kurulum adımlarını takip et.
+
+name: Prism
+options:
+  bundleIdPrefix: com.prism
+  deploymentTarget:
+    macOS: "12.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "12.0"
+    # Lokal geliştirme için ad-hoc signing — host ve extension her zaman aynı
+    # "imza" (yok) ile imzalanır, "matching certificate" hatası fiziksel olarak
+    # imkansız hale gelir. macOS QuickLook ad-hoc signed appex'leri yükler.
+    # Mac App Store / notarized dağıtım için: Style→Automatic, Team→<senin>.
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    "CODE_SIGN_IDENTITY[sdk=macosx*]": "-"
+    DEVELOPMENT_TEAM: ""
+    # Hardened runtime ad-hoc imza ile çakışıyor; release'te tekrar açılır.
+    ENABLE_HARDENED_RUNTIME: NO
+    SWIFT_STRICT_CONCURRENCY: minimal
+
+targets:
+
+  Prism:
+    type: application
+    platform: macOS
+    sources:
+      - path: Prism
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prism.host
+        INFOPLIST_FILE: Prism/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Prism/Prism.entitlements
+        GENERATE_INFOPLIST_FILE: NO
+    dependencies:
+      - target: PrismQuickLook
+        embed: true
+        codeSign: true
+
+  PrismQuickLook:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: PrismQuickLook
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prism.host.PrismQuickLook
+        INFOPLIST_FILE: PrismQuickLook/Info.plist
+        CODE_SIGN_ENTITLEMENTS: PrismQuickLook/PrismQuickLook.entitlements
+        GENERATE_INFOPLIST_FILE: NO
+        SKIP_INSTALL: YES
+
+# Sadece tek scheme tanımlıyoruz: `Prism`. Bu scheme hem host'u hem extension'ı
+# build eder ve ⌘R'da Prism.app'i açar. Dropdown'da kafa karıştıracak ikinci
+# bir extension scheme'i olmaz.
+schemeTemplates: {}
+schemes:
+  Prism:
+    build:
+      targets:
+        Prism: all
+        PrismQuickLook: all
+    run:
+      config: Debug
+      executable: Prism
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

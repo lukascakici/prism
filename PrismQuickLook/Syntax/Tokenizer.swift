@@ -1,9 +1,9 @@
 import Foundation
 
-/// Bir kaynak dilinin tokenizer protokolü.
-/// Yeni dil eklemek = bu protokolü adopte eden yeni bir struct yaz + registry'e kaydet.
+/// Tokenizer protocol for a source language.
+/// Adding a new language = write a new struct that adopts this protocol + register it.
 protocol Tokenizer {
-    /// Verilen kaynak metni token'larına ayırır.
-    /// Token'lar source içindeki sıraya göre döner; aralıklar üst üste binmez.
+    /// Splits the given source text into tokens.
+    /// Tokens are returned in source order; their ranges do not overlap.
     func tokenize(_ source: String) -> [Token]
 }

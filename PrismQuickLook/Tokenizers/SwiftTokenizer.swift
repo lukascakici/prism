@@ -1,15 +1,15 @@
 import Foundation
 
-/// Swift 5+ için tokenizer.
-/// Destekledikleri:
+/// Tokenizer for Swift 5+.
+/// Supports:
 /// - // line comments, /* ... */ block comments (nested!)
 /// - String: "...", """...""", #"..."# (raw)
-/// - String interpolation \(…) — vurgu basit tutulmuştur (string olarak boyanır)
+/// - String interpolation \(…) — kept simple (colored as string)
 /// - Number: int, float, 0x hex, 0b bin, 0o oct
-/// - Keywords (Swift Lang Reference 5.9 listesi)
+/// - Keywords (Swift Lang Reference 5.9 list)
 /// - Constants: true, false, nil
 /// - Type identifier: Capitalized (heuristic)
-/// - Function def isimleri
+/// - Function definition names
 /// - Attributes: @available, @objc, @propertyWrapper…
 struct SwiftTokenizer: Tokenizer {
 
@@ -64,7 +64,7 @@ struct SwiftTokenizer: Tokenizer {
                 continue
             }
 
-            // Raw string: #"..."# (n adet # ile eşleşmeli)
+            // Raw string: #"..."# (must match n leading and trailing #)
             if c == "#" {
                 let mark = s.index
                 var hashes = 0
@@ -73,7 +73,7 @@ struct SwiftTokenizer: Tokenizer {
                     tokens.append(scanRawString(&s, start: mark, hashes: hashes))
                     continue
                 }
-                // # ile başlayıp string olmayan: directive (#if, #file…), keyword renk verelim.
+                // Starts with # but isn't a string: directive (#if, #file…) — color as keyword.
                 s.consume { $0.isIdentifierPart }
                 tokens.append(Token(range: mark..<s.index, type: .keyword))
                 continue
@@ -122,7 +122,7 @@ struct SwiftTokenizer: Tokenizer {
                     }
                     type = .keyword
                 } else if word.first?.isUppercase == true {
-                    // Heuristic: PascalCase → tip.
+                    // Heuristic: PascalCase → type.
                     type = .type
                 } else {
                     type = .identifier
@@ -138,7 +138,7 @@ struct SwiftTokenizer: Tokenizer {
                 tokens.append(Token(range: start..<s.index, type: .punctuation))
                 continue
             }
-            // Operators (Swift'te zengin set; basit topla)
+            // Operators (rich set in Swift; collect simply)
             if "+-*/%=<>!&|^~?.".contains(c) {
                 let start = s.index
                 s.consume { "+-*/%=<>!&|^~?.".contains($0) }
@@ -146,7 +146,7 @@ struct SwiftTokenizer: Tokenizer {
                 continue
             }
 
-            // Bilinmeyen
+            // Unknown
             s.advance()
         }
         return tokens
@@ -194,7 +194,7 @@ struct SwiftTokenizer: Tokenizer {
         return Token(range: start..<s.index, type: .string)
     }
 
-    /// Raw string: ##"..."## (n hash ile başlar, aynı sayıda hash ile biter).
+    /// Raw string: ##"..."## (starts with n hashes, ends with the same number).
     private func scanRawString(_ s: inout Scanner, start: String.Index, hashes: Int) -> Token {
         s.advance() // opening "
         let closingHashes = String(repeating: "#", count: hashes)

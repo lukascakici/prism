@@ -24,14 +24,14 @@
     <dict>
         <key>NSExtensionAttributes</key>
         <dict>
-            <!-- Eklentinin hangi UTI'ler için tetikleneceği. Finder/Spotlight bu listeye bakar. -->
+            <!-- Which UTIs trigger the extension. Finder/Spotlight consult this list. -->
             <key>QLSupportedContentTypes</key>
             <array>
                 <string>public.json</string>
                 <string>public.python-script</string>
                 <string>public.swift-source</string>
             </array>
-            <!-- Spotlight içerik araması bizim için anlamlı değil — yalnızca preview. -->
+            <!-- Spotlight content search is not meaningful for us — preview only. -->
             <key>QLSupportsSearchableItems</key>
             <false/>
         </dict>

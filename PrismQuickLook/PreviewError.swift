@@ -1,7 +1,7 @@
 import Foundation
 
-/// QuickLook preview pipeline'ında oluşabilecek hata türleri.
-/// `LocalizedError` adoptasyonu sayesinde host'a anlamlı mesajlar iletiyoruz.
+/// Error types that can arise in the QuickLook preview pipeline.
+/// Adopting `LocalizedError` lets us pass meaningful messages back to the host.
 enum PreviewError: LocalizedError {
     case notReadable(URL)
     case bundleResourceMissing(String)
@@ -11,14 +11,14 @@ enum PreviewError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notReadable(let url):
-            return "Dosya okunamıyor: \(url.lastPathComponent). Yetkiler kontrol edilmeli."
+            return "Cannot read file: \(url.lastPathComponent). Check permissions."
         case .bundleResourceMissing(let name):
-            return "Eklenti bundle'ında \(name) kaynağı bulunamadı."
+            return "Resource \(name) not found in extension bundle."
         case .fileTooLargeToOpen(let bytes):
             let str = ByteCountFormatter.string(fromByteCount: Int64(bytes), countStyle: .file)
-            return "Dosya çok büyük (\(str)). Önizleme oluşturulamadı."
+            return "File too large (\(str)). Preview could not be generated."
         case .invalidEncoding(let url):
-            return "Dosya UTF-8 olarak okunamadı: \(url.lastPathComponent)."
+            return "File could not be read as UTF-8: \(url.lastPathComponent)."
         }
     }
 }

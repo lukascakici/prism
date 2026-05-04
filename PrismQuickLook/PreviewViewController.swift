@@ -2,16 +2,16 @@ import Cocoa
 import Quartz
 import OSLog
 
-/// QuickLook Preview Extension'ın principal class'ı.
+/// Principal class of the QuickLook Preview Extension.
 ///
-/// Mimari: NSScrollView + NSTextView + NSAttributedString.
-/// Sözdizimi vurgulaması native tokenizer (Tokenizers/) tarafından yapılır.
-/// WKWebView/highlight.js bağımlılığı yok.
+/// Architecture: NSScrollView + NSTextView + NSAttributedString.
+/// Syntax highlighting is performed by native tokenizers (Tokenizers/).
+/// No WKWebView/highlight.js dependency.
 final class PreviewViewController: NSViewController, QLPreviewingController {
 
-    // MARK: - Sabitler
+    // MARK: - Constants
 
-    /// 5 MB üzeri dosyalar truncate edilir; QL XPC süreci bellek limitlidir.
+    /// Files larger than 5 MB are truncated; the QL XPC process is memory-limited.
     private static let maxRenderableBytes: Int = 5 * 1024 * 1024
 
     private let logger = Logger(subsystem: "com.prism.quicklook", category: "Preview")
@@ -24,8 +24,8 @@ final class PreviewViewController: NSViewController, QLPreviewingController {
 
     // MARK: - State
 
-    /// preparePreview tamamlandığında saklanır; viewDidAppear flush eder.
-    /// QL host view'ı handler(nil)'den sonra window'a koyduğu için iki aşamalı.
+    /// Stored when preparePreview completes; viewDidAppear flushes it.
+    /// Two-phase because the QL host puts the view into the window only after handler(nil).
     private var pendingAttributedString: NSAttributedString?
     private var pendingBannerText: String?
 
@@ -81,7 +81,7 @@ final class PreviewViewController: NSViewController, QLPreviewingController {
         scrollView.borderType = .noBorder
         scrollView.drawsBackground = false
 
-        // Long-line desteği için horizontal scroll açık olmalı.
+        // Horizontal scroll must be enabled to support long lines.
         textView.minSize = NSSize(width: 0, height: 0)
         textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         textView.isVerticallyResizable = true
@@ -184,11 +184,11 @@ final class PreviewViewController: NSViewController, QLPreviewingController {
         let limit = ByteCountFormatter.string(
             fromByteCount: Int64(Self.maxRenderableBytes), countStyle: .file
         )
-        return "Dosya \(original) — önizleme ilk \(limit) ile sınırlandırıldı."
+        return "File is \(original) — preview limited to the first \(limit)."
     }
 
     nonisolated private func errorAttributedString(error: Error) -> NSAttributedString {
-        let message = "Önizleme oluşturulamadı:\n\n\(error.localizedDescription)"
+        let message = "Could not generate preview:\n\n\(error.localizedDescription)"
         return NSAttributedString(string: message, attributes: [
             .font: NSFont.systemFont(ofSize: 13),
             .foregroundColor: NSColor.systemRed,

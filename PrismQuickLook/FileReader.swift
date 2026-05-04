@@ -1,17 +1,17 @@
 import Foundation
 
-/// Bellek-disiplinli dosya okuyucu.
+/// Memory-disciplined file reader.
 ///
-/// `Data(contentsOf:)` tüm dosyayı tek seferde belleğe alır ve büyük dosyalarda
-/// QL eklentisinin jetsam limitini aşmasına yol açar. Burada `FileHandle` ile
-/// `limit` byte'a kadar okuyup geri kalanı bilinçli olarak atıyoruz.
+/// `Data(contentsOf:)` loads the whole file into memory at once and, for large files,
+/// can push the QL extension over its jetsam limit. Here we use `FileHandle` to read
+/// up to `limit` bytes and intentionally drop the rest.
 enum FileReader {
 
     /// - Parameters:
-    ///   - url: Okunacak dosya.
-    ///   - limit: Bellek tavanı (byte).
-    ///   - actualSize: Önceden bilinen dosya boyutu (resourceValues'dan).
-    /// - Returns: (decoded UTF-8 metin, truncated mi?)
+    ///   - url: File to read.
+    ///   - limit: Memory cap (bytes).
+    ///   - actualSize: Pre-known file size (from resourceValues).
+    /// - Returns: (decoded UTF-8 text, was it truncated?)
     static func readBoundedUTF8(url: URL,
                                 limit: Int,
                                 actualSize: Int) throws -> (String, Bool) {
@@ -22,21 +22,21 @@ enum FileReader {
         let handle = try FileHandle(forReadingFrom: url)
         defer { try? handle.close() }
 
-        // macOS 12+ API. `read(upToCount:)` istenen miktardan az dönebilir;
-        // bu yüzden tek çağrıyla bitiremezsek loop yapıyoruz.
+        // macOS 12+ API. `read(upToCount:)` may return less than requested,
+        // so we loop if a single call doesn't finish the read.
         var collected = Data()
         collected.reserveCapacity(bytesToRead)
 
         while collected.count < bytesToRead {
             let remaining = bytesToRead - collected.count
             guard let chunk = try handle.read(upToCount: remaining), !chunk.isEmpty else {
-                break // EOF beklenenden erken geldi — sorun değil, elimizdekini döneriz.
+                break // EOF arrived earlier than expected — fine, return what we have.
             }
             collected.append(chunk)
         }
 
-        // UTF-8 dene; başarısız olursa permissive Latin-1 fallback (binary garbage'ı
-        // bile gösterir; önizlemede crash etmek istemiyoruz).
+        // Try UTF-8; on failure fall back to permissive Latin-1 (will even render
+        // binary garbage — we don't want the preview to crash).
         if let utf8 = String(data: collected, encoding: .utf8) {
             return (utf8, willTruncate)
         }
@@ -47,7 +47,7 @@ enum FileReader {
     }
 }
 
-/// HTML escape yardımcısı — `String` extension yerine namespace'lemek ad çakışmasını önler.
+/// HTML escape helper — namespacing instead of a `String` extension avoids name collisions.
 enum HTMLEscaper {
     static func escape(_ input: String) -> String {
         var out = ""

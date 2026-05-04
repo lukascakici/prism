@@ -1,6 +1,6 @@
 import Foundation
 
-/// HTML render aşamasına geçilmeden önce tüm girdilerin toplandığı immutable container.
+/// Immutable container that gathers all inputs before the HTML render stage.
 struct RenderPayload {
     let language: SourceLanguage
     let source: String
@@ -9,14 +9,14 @@ struct RenderPayload {
     let displayName: String
 }
 
-/// Desteklenen kaynak dilleri ve highlight.js karşılıkları.
+/// Supported source languages and their highlight.js counterparts.
 enum SourceLanguage {
     case json
     case python
     case swift
     case plain
 
-    /// highlight.js'in `<code class="language-...">` üzerinden tanıdığı sınıf adı.
+    /// Class name highlight.js recognizes via `<code class="language-...">`.
     var hljsClass: String {
         switch self {
         case .json:   return "language-json"

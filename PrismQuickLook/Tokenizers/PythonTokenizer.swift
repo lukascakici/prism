@@ -1,14 +1,14 @@
 import Foundation
 
-/// Python 3 için tokenizer.
-/// Destekledikleri:
+/// Tokenizer for Python 3.
+/// Supports:
 /// - # line comments
-/// - String literals: '...', "...", '''...''', """..."""  (raw/byte/f prefix'leri dahil)
+/// - String literals: '...', "...", '''...''', """..."""  (including raw/byte/f prefixes)
 /// - Number: int, float, hex (0x), oct (0o), bin (0b)
-/// - Keywords (PEP 8 listesi)
+/// - Keywords (PEP 8 list)
 /// - Builtins: True, False, None
 /// - Decorator: @\w+
-/// - Function/class def isimleri
+/// - Function/class definition names
 struct PythonTokenizer: Tokenizer {
 
     private static let keywords: Set<String> = [
@@ -21,7 +21,7 @@ struct PythonTokenizer: Tokenizer {
 
     private static let constants: Set<String> = ["True", "False", "None"]
 
-    /// String prefix'leri: r, b, u, f ve kombinasyonları (rb, br, fr, rf…). Case-insensitive.
+    /// String prefixes: r, b, u, f and combinations (rb, br, fr, rf…). Case-insensitive.
     private static let stringPrefixes: Set<String> = [
         "r", "R", "b", "B", "u", "U", "f", "F",
         "rb", "Rb", "rB", "RB", "br", "bR", "Br", "BR",
@@ -31,7 +31,7 @@ struct PythonTokenizer: Tokenizer {
     func tokenize(_ source: String) -> [Token] {
         var tokens: [Token] = []
         var s = Scanner(source)
-        // `def`/`class`'tan sonra gelen identifier'ı function/type olarak işaretlemek için.
+        // Mark the identifier following `def`/`class` as a function/type.
         var pendingFunctionDef = false
         var pendingTypeDef = false
 
@@ -58,7 +58,7 @@ struct PythonTokenizer: Tokenizer {
                 continue
             }
 
-            // String prefix? (r"...", f"...", rb'...' vs.)
+            // String prefix? (r"...", f"...", rb'...' etc.)
             if c.isIdentifierStart, let token = tryScanPrefixedString(&s) {
                 tokens.append(token)
                 continue
@@ -102,8 +102,8 @@ struct PythonTokenizer: Tokenizer {
                 continue
             }
 
-            // Operator / punctuation tek karakter pasajı.
-            // (Detaylı operator çakışmaları syntax highlight için önemli değil.)
+            // Single-character operator / punctuation pass.
+            // (Detailed operator collisions don't matter for syntax highlighting.)
             if "(){}[],:;".contains(c) {
                 let start = s.index
                 s.advance()
@@ -117,7 +117,7 @@ struct PythonTokenizer: Tokenizer {
                 continue
             }
 
-            // Bilinmeyen — atla.
+            // Unknown — skip.
             s.advance()
         }
 
@@ -130,7 +130,7 @@ struct PythonTokenizer: Tokenizer {
         let start = s.index
         guard let quote = s.peek else { return Token(range: start..<s.index, type: .string) }
 
-        // Triple-quoted mı?
+        // Triple-quoted?
         let triple = String(repeating: String(quote), count: 3)
         if s.startsWith(triple) {
             s.match(triple) // open
@@ -138,7 +138,7 @@ struct PythonTokenizer: Tokenizer {
                 if s.peek == "\\" { s.advance(); if !s.isAtEnd { s.advance() } }
                 else { s.advance() }
             }
-            s.match(triple) // close (eksikse boş bırak)
+            s.match(triple) // close (leave empty if missing)
             return Token(range: start..<s.index, type: .string)
         }
 
@@ -152,12 +152,12 @@ struct PythonTokenizer: Tokenizer {
         return Token(range: start..<s.index, type: .string)
     }
 
-    /// r"...", f'...', rb"...", BR'...' gibi prefix'li string'leri tarar.
-    /// Eşleşme yoksa scanner'ı geri sarar ve nil döner.
+    /// Scans prefixed strings like r"...", f'...', rb"...", BR'...'.
+    /// If there's no match, rewinds the scanner and returns nil.
     private func tryScanPrefixedString(_ s: inout Scanner) -> Token? {
         let bookmark = s.mark()
 
-        // En fazla 2 karakterlik prefix'i topla.
+        // Collect a prefix of up to 2 characters.
         var prefix = ""
         for _ in 0..<2 {
             if let c = s.peek, c.isASCIILetter {
@@ -168,12 +168,12 @@ struct PythonTokenizer: Tokenizer {
 
         let next = s.peek
         if (next == "\"" || next == "'") && Self.stringPrefixes.contains(prefix) {
-            // String başlıyor — prefix'i de string aralığına dahil et.
+            // String is starting — include the prefix in the string range.
             let stringContent = scanString(&s)
             return Token(range: bookmark..<stringContent.range.upperBound, type: .string)
         }
 
-        // Match yok — geri sar.
+        // No match — rewind.
         s.restore(bookmark)
         return nil
     }

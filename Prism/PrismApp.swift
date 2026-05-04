@@ -1,9 +1,9 @@
 import SwiftUI
 
-/// Quick Look Preview Extension'ları kendi başlarına dağıtılamaz; bir host
-/// uygulaması içinde paketlenir. Bu app, eklentinin sisteme tanıtılması için
-/// gerekli minimal taşıyıcıdır. Kullanıcı uygulamayı en az bir kez açtığında
-/// macOS extension'ı kayda alır ve Finder/Spotlight kullanmaya başlar.
+/// Quick Look Preview Extensions cannot be distributed on their own; they are
+/// packaged inside a host application. This app is the minimal carrier needed to
+/// register the extension with the system. Once the user opens the app at least
+/// once, macOS registers the extension and Finder/Spotlight start using it.
 @main
 struct PrismApp: App {
     var body: some Scene {

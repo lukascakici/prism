@@ -1,7 +1,7 @@
 import AppKit
 
 /// Source string + Tokenizer → NSAttributedString.
-/// NSTextView için drop-in.
+/// Drop-in for NSTextView.
 enum SyntaxRenderer {
 
     static func render(source: String,
@@ -9,14 +9,14 @@ enum SyntaxRenderer {
                        font: NSFont = .monospacedSystemFont(ofSize: 12, weight: .regular)
     ) -> NSAttributedString {
 
-        // Base attributes — tüm metne uygulanır, token'lar üzerine yazar.
+        // Base attributes — applied to the entire text; tokens override them.
         let baseAttrs: [NSAttributedString.Key: Any] = [
             .font: font,
             .foregroundColor: SyntaxTheme.foreground,
         ]
         let result = NSMutableAttributedString(string: source, attributes: baseAttrs)
 
-        // Token'lar üst üste binmediği için doğrudan range'leri set ediyoruz.
+        // Tokens don't overlap, so we set their ranges directly.
         let italicFont = NSFontManager.shared.convert(font, toHaveTrait: .italicFontMask)
 
         for token in tokenizer.tokenize(source) {

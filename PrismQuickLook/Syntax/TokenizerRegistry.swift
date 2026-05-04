@@ -1,7 +1,7 @@
 import Foundation
 
-/// SourceLanguage → Tokenizer eşlemesi.
-/// Yeni dil eklerken: SourceLanguage'a case ekle, Tokenizer yaz, burada map'le.
+/// SourceLanguage → Tokenizer mapping.
+/// To add a new language: add a case to SourceLanguage, write a Tokenizer, map it here.
 enum TokenizerRegistry {
 
     static func tokenizer(for language: SourceLanguage) -> Tokenizer {
@@ -14,7 +14,7 @@ enum TokenizerRegistry {
     }
 }
 
-/// Hiç token üretmez — düz metin için fallback.
+/// Emits no tokens — fallback for plain text.
 struct PlainTokenizer: Tokenizer {
     func tokenize(_ source: String) -> [Token] { [] }
 }

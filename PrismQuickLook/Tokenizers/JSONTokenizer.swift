@@ -1,8 +1,8 @@
 import Foundation
 
-/// JSON için tokenizer.
-/// RFC 8259 grameri: object, array, string, number, true|false|null.
-/// JSON'da yorum yoktur (JSON5/JSONC için ayrı tokenizer gerekir).
+/// Tokenizer for JSON.
+/// RFC 8259 grammar: object, array, string, number, true|false|null.
+/// JSON has no comments (a separate tokenizer is needed for JSON5/JSONC).
 struct JSONTokenizer: Tokenizer {
 
     func tokenize(_ source: String) -> [Token] {
@@ -12,7 +12,7 @@ struct JSONTokenizer: Tokenizer {
         while !s.isAtEnd {
             guard let c = s.peek else { break }
 
-            // Whitespace skip — token üretmiyoruz.
+            // Skip whitespace — we don't emit tokens for it.
             if c.isWhitespace { s.advance(); continue }
 
             // String "..."
@@ -21,7 +21,7 @@ struct JSONTokenizer: Tokenizer {
                 continue
             }
 
-            // Number — opsiyonel '-', sonrası rakam.
+            // Number — optional '-', followed by digits.
             if c == "-" || c.isASCIIDigit {
                 tokens.append(scanNumber(&s))
                 continue
@@ -43,7 +43,7 @@ struct JSONTokenizer: Tokenizer {
                 continue
             }
 
-            // Bilinmeyen — sessizce skip et (bozuk JSON'da crash etme).
+            // Unknown — silently skip (don't crash on malformed JSON).
             s.advance()
         }
 
@@ -90,7 +90,7 @@ struct JSONTokenizer: Tokenizer {
                 return Token(range: start..<s.index, type: .constant)
             }
         }
-        // Eşleşme yok — başka bir şey, identifier-benzeri ama JSON spec'te yok.
+        // No match — something else, identifier-like but not in the JSON spec.
         return nil
     }
 }

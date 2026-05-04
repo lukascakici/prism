@@ -1,12 +1,12 @@
 import AppKit
 
-/// TokenType → NSColor eşlemesi.
+/// TokenType → NSColor mapping.
 ///
-/// `NSColor(name:dynamicProvider:)` API'si sayesinde her renk Light/Dark
-/// appearance'a göre runtime'da çözülür — kullanıcı System ayarlarını değiştirirse
-/// preview canlı güncellenir, attributed string'i yeniden render etmek gerekmez.
+/// Thanks to the `NSColor(name:dynamicProvider:)` API, every color is resolved
+/// at runtime based on Light/Dark appearance — if the user changes System
+/// settings the preview updates live, no need to re-render the attributed string.
 ///
-/// Renk paleti GitHub light/dark teması temel alınmıştır.
+/// The color palette is based on GitHub's light/dark theme.
 enum SyntaxTheme {
 
     static func color(for type: TokenType) -> NSColor {
@@ -28,7 +28,7 @@ enum SyntaxTheme {
         }
     }
 
-    /// Yorum tokenları italik gösterilsin (estetik tercih).
+    /// Render comment tokens in italic (aesthetic preference).
     static func isItalic(_ type: TokenType) -> Bool {
         type == .comment
     }

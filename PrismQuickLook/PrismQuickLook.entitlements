@@ -2,18 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- QL eklentileri için zorunlu: tüm extension'lar sandbox altında çalışmalı. -->
+    <!-- Required for QL extensions: all extensions must run in the sandbox. -->
     <key>com.apple.security.app-sandbox</key>
     <true/>
 
-    <!-- Host tarafından implicit verilen sandbox extension'a ek savunma katmanı.
-         Drag-drop ve Open With… senaryolarında defansif. -->
+    <!-- Defensive layer on top of the sandbox extension implicitly granted by the host.
+         Hardens drag-drop and Open With… scenarios. -->
     <key>com.apple.security.files.user-selected.read-only</key>
     <true/>
 
-    <!-- BİLİNÇLİ OLARAK EKLENMEYENLER:
-         - network.client: tüm asset'ler bundle içinde, dış istek yapmıyoruz.
-         - files.downloads-folder.read-only: gereksiz blast radius.
-         - device.audio/camera/usb: hiçbiri preview için gerekli değil. -->
+    <!-- INTENTIONALLY OMITTED:
+         - network.client: all assets live inside the bundle; we make no external requests.
+         - files.downloads-folder.read-only: unnecessary blast radius.
+         - device.audio/camera/usb: none of these are required for preview. -->
 </dict>
 </plist>

@@ -1,22 +1,22 @@
 import Foundation
 import UniformTypeIdentifiers
 
-/// Dosya URL'sinden kaynak dilini tespit eden yardımcı.
+/// Helper that detects the source language from a file URL.
 ///
-/// Önce UTI üzerinden, çözümlenemezse uzantıya düşerek belirler.
-/// UTI tabanlı yaklaşım filename'siz veya tuhaf uzantılı dosyalarda da çalışır.
+/// Resolves via UTI first, falling back to the file extension if that fails.
+/// The UTI-based approach also works for files without filenames or with unusual extensions.
 enum LanguageDetection {
 
     static func detect(for url: URL) -> SourceLanguage {
 
-        // 1) UTI ile dene (macOS 11+'da UTType API'si tercih ediliyor).
+        // 1) Try UTI first (the UTType API is preferred on macOS 11+).
         if let type = try? url.resourceValues(forKeys: [.contentTypeKey]).contentType {
             if type.conforms(to: .json) { return .json }
             if type.conforms(to: .pythonScript) { return .python }
             if type.conforms(to: .swiftSource) { return .swift }
         }
 
-        // 2) Fallback: uzantı.
+        // 2) Fallback: file extension.
         switch url.pathExtension.lowercased() {
         case "json":         return .json
         case "py", "pyw":    return .python
@@ -27,7 +27,7 @@ enum LanguageDetection {
 }
 
 private extension UTType {
-    // SDK'da hazır gelmeyebilen UTI'leri identifier üzerinden tanımlıyoruz.
+    // Define UTIs by identifier since they may not be available out-of-the-box in the SDK.
     static var pythonScript: UTType {
         UTType("public.python-script") ?? .sourceCode
     }

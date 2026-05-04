@@ -22,5 +22,172 @@
     <string>12.0</string>
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.developer-tools</string>
+
+    <!-- UTI declarations for languages that don't have a system-wide UTI.
+         These MUST live in the host app's Info.plist (not the extension's) —
+         LaunchServices only registers UTIs declared by applications.
+         Use Exported (not Imported) so we claim authoritative ownership of
+         the filename-extension → UTI binding; otherwise the OS may leave the
+         extension bound to a dynamic UTI even when the type id is registered. -->
+    <key>UTExportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>net.daringfireball.markdown</string>
+            <key>UTTypeDescription</key>
+            <string>Markdown Document</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.plain-text</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>md</string>
+                    <string>markdown</string>
+                    <string>mdown</string>
+                    <string>mkd</string>
+                </array>
+                <key>public.mime-type</key>
+                <array>
+                    <string>text/markdown</string>
+                </array>
+            </dict>
+        </dict>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>public.yaml</string>
+            <key>UTTypeDescription</key>
+            <string>YAML Document</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.plain-text</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>yaml</string>
+                    <string>yml</string>
+                </array>
+                <key>public.mime-type</key>
+                <array>
+                    <string>application/x-yaml</string>
+                    <string>text/yaml</string>
+                </array>
+            </dict>
+        </dict>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.prism.host.typescript-source</string>
+            <key>UTTypeDescription</key>
+            <string>TypeScript Source</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.source-code</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>ts</string>
+                    <string>tsx</string>
+                    <string>mts</string>
+                    <string>cts</string>
+                </array>
+                <key>public.mime-type</key>
+                <array>
+                    <string>application/typescript</string>
+                </array>
+            </dict>
+        </dict>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.prism.host.rust-source</string>
+            <key>UTTypeDescription</key>
+            <string>Rust Source</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.source-code</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>rs</string>
+                </array>
+                <key>public.mime-type</key>
+                <array>
+                    <string>text/rust</string>
+                </array>
+            </dict>
+        </dict>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.prism.host.go-source</string>
+            <key>UTTypeDescription</key>
+            <string>Go Source</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.source-code</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>go</string>
+                </array>
+                <key>public.mime-type</key>
+                <array>
+                    <string>text/x-go</string>
+                </array>
+            </dict>
+        </dict>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.prism.host.kotlin-source</string>
+            <key>UTTypeDescription</key>
+            <string>Kotlin Source</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.source-code</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>kt</string>
+                    <string>kts</string>
+                </array>
+                <key>public.mime-type</key>
+                <array>
+                    <string>text/x-kotlin</string>
+                </array>
+            </dict>
+        </dict>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.prism.host.csharp-source</string>
+            <key>UTTypeDescription</key>
+            <string>C# Source</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.source-code</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>cs</string>
+                    <string>csx</string>
+                </array>
+                <key>public.mime-type</key>
+                <array>
+                    <string>text/x-csharp</string>
+                </array>
+            </dict>
+        </dict>
+    </array>
 </dict>
 </plist>

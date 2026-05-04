@@ -1,0 +1,74 @@
+# Prism YAML sample.
+# Exercises: comments, mapping keys, scalars, constants, anchors/aliases,
+# block scalars, flow collections, and document markers.
+
+---
+app:
+  name: Prism Quick Look
+  version: 1.0.0
+  is_production: false
+  channels:
+    - stable
+    - beta
+    - nightly
+  limits:
+    max_bytes: 5242880
+    chunk_size: 64_000
+    fallback_encoding: "iso-8859-1"
+
+# Anchors and aliases
+defaults: &defaults
+  timeout: 30
+  retries: 3
+  verbose: true
+
+services:
+  web:
+    <<: *defaults
+    host: 0.0.0.0
+    port: 8080
+  worker:
+    <<: *defaults
+    queue: tasks
+
+# Booleans, nulls, and number forms
+flags:
+  yes_flag: yes
+  no_flag: no
+  on_flag: ON
+  off_flag: Off
+  null_flag: null
+  tilde_flag: ~
+  hex_value: 0xCAFE
+  octal_value: 0o755
+  scientific: 6.022e23
+  negative: -273.15
+
+# Strings: plain, quoted, and escaped
+strings:
+  plain: this is a plain scalar
+  single: 'embedded ''quote'' is doubled'
+  double: "with escapes: \t tab, \" quote, \\ backslash"
+
+# Block scalars
+literal: |
+  Line one preserved verbatim.
+    Indentation matters here.
+  Line three.
+
+folded: >
+  Long lines are folded
+  into a single paragraph
+  separated by blank lines.
+
+  Second paragraph.
+
+# Flow style
+flow_list: [json, python, swift, markdown]
+flow_map:  { name: prism, port: 8080, healthy: true }
+
+# Tags
+explicit_int: !!int "42"
+explicit_str: !!str 1.0.0
+
+...

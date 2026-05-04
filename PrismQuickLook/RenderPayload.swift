@@ -13,5 +13,19 @@ enum SourceLanguage {
     case json
     case python
     case swift
+    case markdown
+    case yaml
+    case shell
+    case css
+    case javascript
+    case typescript
+    case c
+    case cpp
+    case objectiveC
+    case java
+    case kotlin
+    case go
+    case rust
+    case csharp
     case plain
 }

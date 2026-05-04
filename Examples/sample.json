@@ -1,0 +1,27 @@
+{
+  "appName": "Prism Quick Look",
+  "version": "1.0.0",
+  "isProduction": false,
+  "buildNumber": 42,
+  "ratio": 1.6180339887,
+  "scientific": 6.022e23,
+  "negative": -273.15,
+  "tags": ["macOS", "QuickLook", "Swift", "syntax-highlight"],
+  "supportedLanguages": [
+    { "id": "json",     "uti": "public.json" },
+    { "id": "python",   "uti": "public.python-script" },
+    { "id": "swift",    "uti": "public.swift-source" },
+    { "id": "markdown", "uti": "net.daringfireball.markdown" }
+  ],
+  "limits": {
+    "maxBytes": 5242880,
+    "linesPerChunk": null,
+    "fallbackEncoding": "iso-8859-1"
+  },
+  "escapeShowcase": "tab\there, newline\\n, quote\\\", backslash\\\\, unicode\\u00e9",
+  "emptyArray": [],
+  "emptyObject": {},
+  "trueValue": true,
+  "falseValue": false,
+  "nullValue": null
+}

@@ -24,12 +24,41 @@
     <dict>
         <key>NSExtensionAttributes</key>
         <dict>
-            <!-- Which UTIs trigger the extension. Finder/Spotlight consult this list. -->
+            <!-- Which UTIs trigger the extension. Finder/Spotlight consult this list.
+                 UTI declarations themselves live in the host app's Info.plist —
+                 LaunchServices only reads them from applications, not extensions. -->
             <key>QLSupportedContentTypes</key>
             <array>
                 <string>public.json</string>
                 <string>public.python-script</string>
                 <string>public.swift-source</string>
+                <string>public.shell-script</string>
+                <string>public.css</string>
+                <string>net.daringfireball.markdown</string>
+                <string>public.yaml</string>
+                <string>public.c-source</string>
+                <string>public.c-header</string>
+                <string>public.c-plus-plus-source</string>
+                <string>public.c-plus-plus-header</string>
+                <string>public.objective-c-source</string>
+                <string>public.objective-c-plus-plus-source</string>
+                <string>com.sun.java-source</string>
+                <string>com.netscape.javascript-source</string>
+                <!-- Claim BOTH our private namespace AND any well-known third-party
+                     UTIs so we match no matter which one the OS ends up binding to
+                     a given file. The com.prism.host.* declarations live in the host
+                     plist; the public/org.* names may already be claimed by other
+                     bundles on the user's system. -->
+                <string>com.prism.host.typescript-source</string>
+                <string>public.typescript-source</string>
+                <string>com.prism.host.rust-source</string>
+                <string>org.rust-lang.rust-source</string>
+                <string>com.prism.host.go-source</string>
+                <string>org.golang.go-source</string>
+                <string>com.prism.host.kotlin-source</string>
+                <string>org.jetbrains.kotlin.source</string>
+                <string>com.prism.host.csharp-source</string>
+                <string>com.microsoft.csharp-source</string>
             </array>
             <!-- Spotlight content search is not meaningful for us — preview only. -->
             <key>QLSupportsSearchableItems</key>

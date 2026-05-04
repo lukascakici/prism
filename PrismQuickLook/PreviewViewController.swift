@@ -171,8 +171,7 @@ final class PreviewViewController: NSViewController, QLPreviewingController {
             language: LanguageDetection.detect(for: url),
             source: sourceText,
             originalByteCount: fileSize,
-            wasTruncated: didTruncate,
-            displayName: url.lastPathComponent
+            wasTruncated: didTruncate
         )
     }
 

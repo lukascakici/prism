@@ -1,7 +1,7 @@
 # Prism — macOS Quick Look Syntax Highlighter
 
 Syntax-highlighted Quick Look previews for JSON, Python, and Swift files.
-Uses a `WKWebView` + bundled `highlight.js` architecture; sandbox-friendly, no external network access required.
+Pure native rendering — `NSTextView` + `NSAttributedString` driven by hand-written tokenizers. Sandbox-friendly, no external assets, no network access.
 
 ## Quick start
 
@@ -25,8 +25,7 @@ Once Xcode is open:
 2. Add **File → New → Target → macOS → Quick Look Preview Extension** (`PrismQuickLook`).
 3. Add the files from this repo to the matching targets:
    - `Prism/` → host app target
-   - `PrismQuickLook/*.swift` → extension target (Compile Sources)
-   - `PrismQuickLook/Resources/` → extension target (Copy Bundle Resources, add as a folder reference)
+   - `PrismQuickLook/*.swift` (including `Tokenizers/` and `Syntax/`) → extension target (Compile Sources)
 4. Replace both targets' `Info.plist` and `*.entitlements` settings with the ones in this repo.
 5. Build & Run.
 
@@ -34,26 +33,29 @@ Once Xcode is open:
 
 | Layer | Responsibility |
 |---|---|
-| `PreviewViewController` | `QLPreviewingController` adapter, `WKWebView` host |
-| `FileReader` | Memory-disciplined (5MB cap) UTF-8 reader |
-| `LanguageDetection` | UTI → `SourceLanguage` mapping |
-| `RenderPayload` | Immutable view-model |
-| `Resources/preview.html` | Template; `{{LANG}}`, `{{CODE}}`, `{{BANNER}}`, `{{TITLE}}` placeholders |
-| `Resources/highlight.min.js` | highlight.js core (v11.9.0) |
+| `PreviewViewController` | `QLPreviewingController` adapter; hosts an `NSScrollView` + `NSTextView` |
+| `FileReader` | Memory-disciplined (5 MB cap) UTF-8 reader with Latin-1 fallback |
+| `LanguageDetection` | UTI → `SourceLanguage` mapping, with file-extension fallback |
+| `RenderPayload` | Immutable view-model passed from loader to renderer |
+| `Syntax/Scanner` | Unicode-safe character cursor used by every tokenizer |
+| `Syntax/Tokenizer` | Protocol; one implementation per language |
+| `Syntax/SyntaxRenderer` | Source + Tokenizer → `NSAttributedString` |
+| `Syntax/SyntaxTheme` | `TokenType` → dynamic light/dark `NSColor` (GitHub palette) |
+| `Tokenizers/{JSON,Python,Swift}Tokenizer` | Per-language tokenizers |
 
 ## Performance notes
 
 - **5 MB cap**: `FileReader.readBoundedUTF8` reads the file in chunks via `FileHandle`,
   showing a truncate banner if the limit is exceeded.
-- **Cold-start**: programmatic view instead of `.xib`; `WKWebView` warm-up is ~80–150 ms.
-- **Theme**: CSS `prefers-color-scheme` media query — no extra code on the Swift side.
-- **Memory**: WebContent process runs in a separate XPC; the extension process stays around ~15 MB.
+- **Cold-start**: programmatic view, no `.xib` loading; rendering is a single `NSAttributedString` build, no web engine warm-up.
+- **Theme**: `NSColor(name:dynamicProvider:)` resolves Light/Dark at render time — switching the system appearance updates the preview live without re-rendering.
+- **Memory**: extension process stays small; no separate WebContent process is spawned.
 
 ## Sandbox & Security
 
-- All assets live inside the bundle — the `network.client` entitlement is **not added**.
-- The navigation policy rejects everything except `file://` / `about:` / `data:`.
-- Security-scoped resource access is managed via the `start/stop` defer pattern.
+- App-sandboxed (`com.apple.security.app-sandbox`); only `files.user-selected.read-only` is granted.
+- The `network.client` entitlement is **not added** — there is no remote asset loading and no WebView, so no navigation policy is required.
+- Security-scoped resource access uses the `start/stop` defer pattern.
 
 ## Test
 

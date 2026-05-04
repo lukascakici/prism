@@ -46,22 +46,3 @@ enum FileReader {
         throw PreviewError.invalidEncoding(url)
     }
 }
-
-/// HTML escape helper — namespacing instead of a `String` extension avoids name collisions.
-enum HTMLEscaper {
-    static func escape(_ input: String) -> String {
-        var out = ""
-        out.reserveCapacity(input.count)
-        for ch in input {
-            switch ch {
-            case "&":  out.append("&amp;")
-            case "<":  out.append("&lt;")
-            case ">":  out.append("&gt;")
-            case "\"": out.append("&quot;")
-            case "'":  out.append("&#39;")
-            default:   out.append(ch)
-            }
-        }
-        return out
-    }
-}
